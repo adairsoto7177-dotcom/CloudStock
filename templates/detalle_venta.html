@@ -1,0 +1,3 @@
+{% extends 'base.html' %}{% block title %}Detalle de venta{% endblock %}{% block content %}
+<h1>Venta #{{ venta.id_venta }}</h1><p class="subtitle">{{ venta.fecha }} · {{ venta.usuario.nombre }} · {{ venta.estado }}</p>
+<div class="table-container"><table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th></tr></thead><tbody>{% for d in venta.detalles %}<tr><td>{{ d.producto.nombre }}</td><td>{{ d.cantidad }}</td><td>${{ '{:,.2f}'.format(d.precio_unitario) }}</td><td>${{ '{:,.2f}'.format(d.subtotal) }}</td></tr>{% endfor %}</tbody></table><h2 class="sale-total">Total: ${{ '{:,.2f}'.format(venta.total) }}</h2><a class="btn btn-gray" href="{{ url_for('ventas') }}">Regresar</a></div>{% endblock %}

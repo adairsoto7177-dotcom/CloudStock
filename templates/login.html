@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>CloudStock | Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="login-body">
+
+    <div class="login-container">
+
+        <div class="brand">
+            <div class="logo"></div>
+            <h1>CloudStock</h1>
+            <p>Sistema de gestión de inventario</p>
+        </div>
+
+        <div class="login-card">
+
+            <h2>Iniciar sesión</h2>
+
+            <p>Ingresa tus credenciales para continuar.</p>
+
+            {% with messages = get_flashed_messages() %}
+                {% for message in messages %}
+                    <div class="error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="POST">
+
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token }}">
+
+                <label>Correo electrónico</label>
+
+                <input type="email"
+                       name="correo"
+                       placeholder="correo@ejemplo.com"
+                       required>
+
+                <label>Contraseña</label>
+
+                <input type="password"
+                       name="password"
+                       placeholder="********"
+                       required>
+
+                <button type="submit">
+                    Iniciar sesión
+                </button>
+
+            </form>
+
+        </div>
+
+        <footer>
+            CloudStock · Inventory Management System
+        </footer>
+
+    </div>
+
+</body>
+</html>

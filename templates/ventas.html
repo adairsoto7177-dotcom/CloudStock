@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Ventas{% endblock %}
+{% block content %}
+<h1>Gestión de ventas</h1><p class="subtitle">Registra ventas y descuenta existencias automáticamente.</p>
+<div class="table-container chart-panel"><h2>Nueva venta</h2>
+{% if productos %}
+<form method="POST" id="venta-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+<div id="lineas"><div class="sale-line"><select name="id_producto" required>{% for p in productos %}<option value="{{ p.id_producto }}" data-precio="{{ p.precio_venta }}">{{ p.codigo }} - {{ p.nombre }} ({{ p.stock }} disponibles) — ${{ p.precio_venta }}</option>{% endfor %}</select><input type="number" name="cantidad" value="1" min="1" max="2147483647" required><button type="button" class="btn btn-red quitar">Quitar</button></div></div>
+<div class="actions"><button type="button" class="btn btn-gray" id="agregar">+ Otro producto</button><button class="btn btn-green" type="submit">Registrar venta</button></div><h2 class="sale-total">Total estimado: <span id="total">$0.00</span></h2><p class="subtitle">El servidor valida precios y existencias antes de confirmar.</p></form>
+{% else %}<p>No hay productos disponibles para vender.</p>{% endif %}</div>
+<div class="table-container"><h2>Últimas ventas</h2><table><thead><tr><th>Folio</th><th>Fecha</th><th>Usuario</th><th>Total</th><th>Estado</th><th>Detalle</th></tr></thead><tbody>{% for v in ventas %}<tr><td>#{{ v.id_venta }}</td><td>{{ v.fecha }}</td><td>{{ v.usuario.nombre }}</td><td>${{ '{:,.2f}'.format(v.total) }}</td><td>{{ v.estado }}</td><td><a class="btn btn-blue" href="{{ url_for('detalle_venta',id_venta=v.id_venta) }}">Ver</a></td></tr>{% else %}<tr><td colspan="6">No hay ventas registradas.</td></tr>{% endfor %}</tbody></table></div>
+{% if productos %}<script>
+const lineas=document.getElementById('lineas');
+function total(){let suma=0;for(const l of lineas.children){const s=l.querySelector('select');suma+=Number(s.selectedOptions[0].dataset.precio)*Number(l.querySelector('input').value||0);}document.getElementById('total').textContent=suma.toLocaleString('es-MX',{style:'currency',currency:'MXN'});}
+document.getElementById('agregar').addEventListener('click',()=>{if(lineas.children.length>=50)return;const l=lineas.firstElementChild.cloneNode(true);l.querySelector('input').value=1;lineas.append(l);total();});lineas.addEventListener('click',e=>{if(e.target.classList.contains('quitar')&&lineas.children.length>1){e.target.closest('.sale-line').remove();total();}});lineas.addEventListener('input',total);lineas.addEventListener('change',total);total();
+</script>{% endif %}
+{% endblock %}

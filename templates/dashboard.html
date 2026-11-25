@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Panel de administración</h1>
+<p class="subtitle">Bienvenido, {{ current_user.nombre }}</p>
+<div class="stats">
+<div class="stat-card"><p>Productos registrados</p><h2>{{ total_productos }}</h2></div>
+<div class="stat-card"><p>Unidades disponibles</p><h2 class="green">{{ unidades }}</h2></div>
+<div class="stat-card"><p>Stock bajo</p><h2 class="yellow">{{ stock_bajo }}</h2></div>
+<div class="stat-card"><p>Agotados</p><h2 class="red">{{ agotados }}</h2></div>
+</div>
+<div class="stats"><div class="stat-card"><p>Ventas completadas</p><h2>{{ total_ventas }}</h2></div><div class="stat-card"><p>Ingresos acumulados</p><h2 class="green">${{ '{:,.2f}'.format(ingresos) }}</h2></div></div>
+<div class="table-container chart-panel"><h2>Ingresos de los últimos 7 días</h2><div class="sales-chart">
+{% set maximo = montos|max %}{% for monto in montos %}<div class="chart-col"><span>${{ '{:,.0f}'.format(monto) }}</span><div class="chart-track"><div class="chart-bar" style="height:{{ (monto / maximo * 100) if maximo else 0 }}%"></div></div><span>{{ dias[loop.index0] }}</span></div>{% endfor %}
+</div></div><div class="table-container"><h2>Inventario actual</h2>
+<table><thead><tr><th>Código</th><th>Producto</th><th>Precio</th><th>Stock</th><th>Estado</th></tr></thead><tbody>
+{% for p in productos %}<tr><td>{{ p.codigo }}</td><td>{{ p.nombre }}</td><td>${{ '{:,.2f}'.format(p.precio_venta) }}</td><td>{{ p.stock }}</td><td>
+{% if p.stock == 0 %}<span class="badge red">Agotado</span>{% elif p.stock <= p.stock_minimo %}<span class="badge yellow">Stock bajo</span>{% else %}<span class="badge green">Disponible</span>{% endif %}
+</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

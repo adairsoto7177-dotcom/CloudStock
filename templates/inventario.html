@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Inventario{% endblock %}
+{% block content %}
+<h1>Movimientos de inventario</h1><p class="subtitle">Controla las entradas y salidas de mercancía.</p>
+{% if current_user.rol == 'administrador' %}<div class="table-container" style="margin-bottom: 25px"><h2>Registrar movimiento</h2>
+<form method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><div class="form-grid">
+<div><label for="producto">Producto</label><select id="producto" name="id_producto" required><option value="">Selecciona un producto</option>{% for p in productos %}<option value="{{ p.id_producto }}">{{ p.codigo }} – {{ p.nombre }} ({{ p.stock }} disponibles)</option>{% endfor %}</select></div>
+<div><label for="tipo">Tipo de movimiento</label><select id="tipo" name="tipo"><option value="entrada">Entrada</option><option value="salida">Salida</option></select></div>
+<div><label for="cantidad">Cantidad</label><input id="cantidad" name="cantidad" type="number" min="1" max="2147483647" required></div>
+<div><label for="motivo">Motivo</label><input id="motivo" name="motivo" maxlength="255" placeholder="Compra, ajuste, mercancía dañada..." required></div>
+</div><button class="btn btn-green">Registrar movimiento</button></form></div>{% endif %}
+<div class="table-container"><h2>Historial de movimientos</h2><p class="subtitle">Últimos 100 movimientos registrados.</p><table><thead><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Anterior</th><th>Nuevo</th><th>Motivo</th><th>Usuario</th></tr></thead><tbody>
+{% for m in historial %}<tr><td>{{ m.fecha.strftime('%d/%m/%Y %H:%M') }}</td><td>{{ m.producto.nombre }}</td><td><span class="badge {{ 'green' if m.tipo == 'entrada' else 'red' }}">{{ m.tipo|capitalize }}</span></td><td>{{ m.cantidad }}</td><td>{{ m.stock_anterior }}</td><td>{{ m.stock_nuevo }}</td><td>{{ m.motivo }}</td><td>{{ m.usuario.nombre }}</td></tr>{% else %}<tr><td colspan="8">Todavía no hay movimientos.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

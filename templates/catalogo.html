@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="page-header"><div><h1>Gestión de {{ titulo|lower }}</h1><p class="subtitle">Administra el catálogo de tu negocio.</p></div>
+{% if current_user.rol == 'administrador' %}<a class="btn btn-green" href="{{ url_for('formulario_catalogo', tipo=tipo) }}">+ Nuevo registro</a>{% endif %}</div>
+<div class="table-container"><table><thead><tr>{% for campo, etiqueta, limite in campos %}<th>{{ etiqueta }}</th>{% endfor %}<th>Acciones</th></tr></thead><tbody>
+{% for r in registros %}<tr>{% for campo, etiqueta, limite in campos %}<td>{{ r|attr(campo) or '—' }}</td>{% endfor %}<td>
+{% if current_user.rol == 'administrador' %}<div class="actions"><a class="btn btn-blue" href="{{ url_for('formulario_catalogo', tipo=tipo, id_registro=r|attr(pk)) }}">Editar</a>
+<form method="POST" action="{{ url_for('eliminar_catalogo', tipo=tipo, id_registro=r|attr(pk)) }}" onsubmit="return confirm('¿Eliminar registro?')"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-red">Eliminar</button></form></div>{% else %}Solo lectura{% endif %}</td></tr>
+{% else %}<tr><td colspan="{{ campos|length + 1 }}">No hay registros.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}
